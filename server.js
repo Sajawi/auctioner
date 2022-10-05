@@ -1,9 +1,8 @@
 const express = require("express");
 const server = express();
-// ta emot json i request body
+
 server.use(express.json());
 
-// lägg till session-hantering
 session = require("express-session");
 server.use(
   session({
@@ -14,12 +13,14 @@ server.use(
   })
 );
 
-// starta servern
+// starta server
+
 server.listen(3000, () => {
   console.log("server started at http://localhost:3000/data");
 });
 
-// data
+//  data från databasen
+
 const util = require("util");
 const sqlite3 = require("sqlite3");
 const req = require("express/lib/request");
@@ -27,10 +28,11 @@ const db = new sqlite3.Database("./db/auctioner.db");
 db.all = util.promisify(db.all);
 db.run = util.promisify(db.run);
 
-// REST API
+// Här visas REST API
 
 //1 Som besökare vill jag kunna se sammanfattade auktionsobjekt som en lista.
 //4 Som besökare vill jag kunna se nuvarande bud på auktionsobjekt i listvyer
+
 server.get("/data/products", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid
 FROM auctions
@@ -42,6 +44,7 @@ JOIN bids ON bids.auctionId = auctions.id;`;
 
 //2 Som besökare vill jag kunna se detaljer för varje auktionsobjekt
 //5 Som besökare vill jag kunna se nuvarande bud på auktionsobjekt i detaljsidor.
+
 server.get("/data/auction/:id", async (request, response) => {
   let query = `SELECT products.name, bids.highestBid, products.startPrice, products.description, products.image, users.name, categories.categoryName
 FROM auctions
@@ -55,6 +58,7 @@ WHERE auctions.id = ?`;
 });
 
 //3 Som besökare vill jag kunna söka på auktioner baserat på vad jag skriver i ett sökfält.
+
 server.get("/data/search/:keyword", async (request, response) => {
   let query = `SELECT products.name, bids.highestBid, products.image
 FROM auctions
@@ -67,6 +71,7 @@ WHERE products.name like(?);`;
 });
 
 //14 Som besökare vill jag kunna se auktioner inom kategorier.
+
 server.get("/data/search/categories/:category", async (request, response) => {
   let query = `SELECT products.name, bids.highestBid, products.image
 FROM auctions
@@ -77,7 +82,10 @@ WHERE categories.categoryName LIKE(?)`;
   let result = await db.all(query, ["%" + request.params.category + "%"]);
   response.json(result);
 });
+
+
 //15 Som besökare vill jag kunna söka på auktioner inom en kategori jag valt.
+
 server.get(
   "/data/search/categories/:category/:product",
   async (request, response) => {
@@ -108,6 +116,7 @@ VALUES (?,?,?)`;
 });
 
 //7 Som användare vill jag kunna logga in
+
 server.post("/data/login", async (request, response) => {
   let query = "SELECT * FROM users WHERE email = ? AND password = ?";
   let result = await db.all(query, [request.body.email, request.body.password]);
@@ -119,7 +128,9 @@ server.post("/data/login", async (request, response) => {
     response.json({ loggedIn: false });
   }
 });
-//7 Kolla om man är inloggad på hemsidan
+
+//7 Kolla om man är inloggad och kan logga ut på hemsidan
+
 server.get("/data/login", async (request, response) => {
   if (request.session.customer) {
     let query = "SELECT * FROM users WHERE email = ? AND password = ?";
@@ -142,7 +153,7 @@ server.get("/data/login", async (request, response) => {
   }
 });
 
-// 7 Logga ut från hemsidan
+
 server.delete("/data/login", async (request, response) => {
   delete request.session.customer;
   response.json({ loggedIn: false });
@@ -150,6 +161,7 @@ server.delete("/data/login", async (request, response) => {
 
 //8 Som användare vill jag kunna lägga (högre än nuvarande) bud på auktionsobjekt på dess detaljsida.
 //10 Som användare ska jag inte kunna lägga bud på mina egna auktionsobjekt.
+
 server.put("/data/auction/:auctionId", async (request, response) => {
   if (request.session.customer) {
     let query = `SELECT highestBid FROM bids WHERE bids.auctionId = ?`;
@@ -180,11 +192,12 @@ server.put("/data/auction/:auctionId", async (request, response) => {
   }
 });
 
-//Lägga till
+
 //9 Som användare vill jag kunna skapa nya auktionsobjekt.
 //11 Som användare vill jag att auktionsobjekt ska innehålla minst titel, beskrivning, starttid, sluttid och bild(er)
 //12 Som användare vill jag kunna sätta ett utgångspris på mina auktionsobjekt.
-//13 Som användare vill jag kunna sätta ett dolt reservationspris på mina auktionsobjekt. (om bud ej uppnått reservationspris när auktionen avslutas så säljs objektet inte).
+//13 Som användare vill jag kunna sätta ett dolt reservationspris på mina auktionsobjekt.
+//(om bud ej uppnått reservationspris när auktionen avslutas så säljs objektet inte).
 server.post("/data/auctions", async (request, response) => {
   if (request.session.customer) {
     let query = `INSERT INTO products (name, startPrice, description, image, reservationPrice, category,  startTime, endTime, sellerId)
@@ -216,7 +229,7 @@ VALUES ((SELECT id FROM auctions WHERE id = (
 });
 
 //16 Som besökare vill jag kunna se auktioner baserat på status (pågående, avslutade, sålda, ej sålda).
-//Ongoing
+
 server.get("/data/status/ongoing", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid
                     FROM auctions
@@ -227,7 +240,7 @@ server.get("/data/status/ongoing", async (request, response) => {
   response.json(result);
 });
 
-//16 Completed
+
 server.get("/data/status/completed", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid
                     FROM auctions
@@ -238,7 +251,6 @@ server.get("/data/status/completed", async (request, response) => {
   response.json(result);
 });
 
-//16 Sold
 server.get("/data/status/sold", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid, products.endTime AS Expired
                     FROM auctions
@@ -251,7 +263,6 @@ server.get("/data/status/sold", async (request, response) => {
   response.json(result);
 });
 
-//16 Not sold
 server.get("/data/status/not-sold", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid, products.endTime
                     FROM auctions
@@ -265,6 +276,7 @@ server.get("/data/status/not-sold", async (request, response) => {
 });
 
 //17 Som användare vill jag kunna se en lista med mina egna auktionsobjekt.
+
 server.get("/data/my-auctions", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid
 FROM auctions
@@ -276,6 +288,7 @@ WHERE auctions.auctionHolder = ?`;
 });
 
 //18 Som användare vill jag kunna se en lista med auktionsobjekt jag har lagt bud på.
+
 server.get("/data/my-bids", async (request, response) => {
   let query = `SELECT products.name, products.image, bids.highestBid
 FROM auctions
@@ -287,6 +300,7 @@ WHERE bids.bidder = ?`;
 });
 
 //20 Som användare vill jag ha en publik profilsida där namn, publika kontaktuppgift(er) & bild visas för andra att läsa.
+
 server.get("/data/profiles/:id", async (request, response) => {
   let query = `SELECT name, phoneNumber, email, picture
 FROM users
