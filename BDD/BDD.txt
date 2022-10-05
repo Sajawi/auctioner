@@ -1,0 +1,80 @@
+1. As a user I want to see auctions as a list
+GIVEN I have my web browser open
+WHEN I enter the home page
+THEN auction objects are displayed
+
+2. As a user I want to view details about an auction
+GIVEN I am on the home page
+WHEN I select an auction
+THEN redirect to the details page
+AND details about the auction are displayed
+
+3. As a user I want to search for a specific product
+GIVEN I am on the website
+WHEN I enter a search term in the search bar
+THEN the products resulting from that search are displayed
+
+4. As a user I want to be able to see the current bid of auction objects
+GIVEN I have my web browser open
+WHEN I enter the home page
+THEN auction object's current bid is displayed
+
+5. As a user I want to be able to see the current bid of an auctioned object
+GIVEN I am on the home page
+WHEN I select an auction
+THEN redirect to the details page
+AND show the current bid for the auction
+
+6. As a user I want to be able to register an account
+GIVEN I am on the website
+WHEN I click on the sign in button
+THEN prompt to enter user credentials
+AND ask for username
+AND ask for the password
+AND ask for an email
+WHEN the user enters the required information
+THEN create account
+
+7. As a user I want to log into my account.
+GIVEN I have an account
+WHEN I click on the login button
+THEN ask for username and password
+WHEN I enter the username and password
+AND I click on the login
+THEN validate the login
+
+8. As a user I want to be able to place bids on auction objects
+GIVEN I am the details page
+WHEN I enter an amount
+AND click the "place bid" button
+THEN check if the bid is higher than the current highest bid
+AND update the highest bid
+
+9. As a user I want to be able to create new auctions
+GIVEN I am logged in as a user
+AND I am on the home page
+WHEN I click on the "create auction" button
+THEN present a form to enter auction information
+AND I fill in the information about the auction
+WHEN I click confirm
+THEN the auction is created
+
+10. As a user I shall not be able to place bids on my auctions
+GIVEN I created the auction
+WHEN I try to place a bid on the auction
+THEN reject the bid
+
+11. As a user I want an auction to contain at least a title, description, start time, end time, and images
+
+12. As a user I want to set a starting price for my auctions
+GIVEN I create an auction
+AND I want to set a starting price
+WHEN I enter a starting price
+THEN set the starting price
+
+13. As a user I want to set a reservation price for my auction
+GIVEN I create an auction
+AND I want to set a reservation price
+WHEN I enter a reservation price
+THEN set the reservation price
+AND make sure it is hidden from other users
