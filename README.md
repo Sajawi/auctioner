@@ -21,15 +21,21 @@ http://localhost:3000/data/user
  
 5. Log-in request, log-in status and log ut: 
 To make a login request you will have to post one existing email address and a password that matches the email address on:
+
  http://localhost:3000/data/login 
+
 and get a Boolean message if the login was successful or if it failed.
 
 To check if a user is currently logged in on the webpage you need to make a get request on:
-http://localhost:3000/data/login 
+
+http://localhost:3000/data/login
+
 and will then get a Boolean message if the user is logged in or not.
 
 To log out from an account you will have to make a Delete request on: 
-http://localhost:3000/data/login 
+
+http://localhost:3000/data/login
+
 and the user will be logged out from the page.
 
 6. Place a bid on an auction
@@ -39,7 +45,9 @@ http://localhost:3000/data/auction/:id
  
 7. Add an auction to the database:
 To add an auction to the database you will have to make a post request on:
+
  http://localhost:3000/data/auctions 
+ 
 that makes with all the data needed to create an auction.
 
  
