@@ -53,7 +53,7 @@ API-DOKUMENTATION
      to list all the auctions that have been sold you will have to make a get request on:
       http://localhost:3000/data/status/sold
 
-11.All ongoing auctions:
+11. All ongoing auctions:
     to get all ongoing auctions you will have to make a get request on:
      http://localhost:3000/data/status/ongoing
 
